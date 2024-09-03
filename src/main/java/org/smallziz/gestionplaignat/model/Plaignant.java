@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,10 +19,11 @@ public class Plaignant {
     @Id
     @Size(max = 255)
     @Column(name = "PLAIGNANT_ID", nullable = false)
-    private String plaignantId;
+    private String plaignantId = UUID.randomUUID().toString();
 
     @Size(max = 255)
     @NotNull
+    @UniqueElements
     @Column(name = "PLAIGNANT_PSEUDO", nullable = false)
     private String plaignantPseudo;
 
