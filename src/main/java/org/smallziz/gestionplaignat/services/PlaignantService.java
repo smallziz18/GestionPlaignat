@@ -11,8 +11,12 @@ import java.util.Optional;
 @Service
 public class PlaignantService {
 
-    @Autowired
+
     private PlaignantRepository plaignantRepository;
+
+    public PlaignantService(PlaignantRepository plaignantRepository) {
+        this.plaignantRepository = plaignantRepository;
+    }
 
 
     public List<Plaignant> findAllPlaignants() {
@@ -22,6 +26,7 @@ public class PlaignantService {
     public Optional<Plaignant> findPlaignantById(String id) {
         return plaignantRepository.findById(id);
     }
+
 
     public Plaignant savePlaignant(Plaignant plaignant) {
         return plaignantRepository.save(plaignant);
