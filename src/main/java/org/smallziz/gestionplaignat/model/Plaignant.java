@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 
@@ -17,21 +15,18 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "plaignant")
-public class Plaignant   {
+public class Plaignant {
     @Id
     @Column(name = "PLAIGNANT_ID", nullable = false)
     private String plaignantId = UUID.randomUUID().toString();
-
 
     @NotNull
     @Column(name = "PLAIGNANT_PSEUDO", nullable = false, unique = true)
     private String plaignantPseudo;
 
-
     @NotNull
     @Column(name = "PLAIGNANT_PRENOM", nullable = false)
     private String plaignantPrenom;
-
 
     @NotNull
     @Column(name = "PLAIGNANT_NOM", nullable = false)
@@ -48,7 +43,7 @@ public class Plaignant   {
 
     @Size(max = 50)
     @Email
-    @Column(name = "PLAIGNANT_EMAIL", nullable = true, length = 50)
+    @Column(name = "PLAIGNANT_EMAIL", length = 50)
     private String plaignantEmail;
 
     @Column(name = "PLAIGNANT_SEXE")
@@ -62,12 +57,10 @@ public class Plaignant   {
     @Size(max = 255)
     @Column(name = "PLAIGNANT_AVATAR")
     private String plaignantAvatar;
+
+    @Column(name = "MOT_DE_PASSE", nullable = false)
+    @NotNull
     private String motDePasse;
 
-
-
-
-    /*@OneToMany(mappedBy = "plaignant")
-    private Set<Complainte> complaintes = new LinkedHashSet<>();*/
 
 }
