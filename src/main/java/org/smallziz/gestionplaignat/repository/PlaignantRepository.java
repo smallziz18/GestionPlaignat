@@ -18,5 +18,8 @@ public interface PlaignantRepository extends JpaRepository<Plaignant, String> {
     // Recherche d'un plaignant par son numéro de téléphone principal
     Optional<Plaignant> findByPlaignantTel1(String tel1);
 
+    // Méthode pour trouver un plaignant par pseudo
+    Optional<Plaignant> findByPlaignantPseudo(String plaignantPseudo);
+
 
 }

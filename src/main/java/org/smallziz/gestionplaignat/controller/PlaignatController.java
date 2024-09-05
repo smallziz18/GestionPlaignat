@@ -3,6 +3,8 @@ package org.smallziz.gestionplaignat.controller;
 import org.smallziz.gestionplaignat.model.Plaignant;
 import org.smallziz.gestionplaignat.services.PlaignantService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus; // Import HttpStatus
+import org.springframework.http.ResponseEntity; // Import ResponseEntity
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +25,7 @@ public class PlaignatController {
     }
 
     // Récupérer tous les plaignants
-    @GetMapping
+    @GetMapping("/plaignants")
     public List<Plaignant> getAllPlaignants() {
         return plaignantService.findAllPlaignants();
     }
@@ -44,6 +46,16 @@ public class PlaignatController {
     @DeleteMapping("/delete/{id}")
     public void deletePlaignant(@PathVariable String id) {
         plaignantService.deletePlaignant(id);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam String pseudo, @RequestParam String password) {
+        boolean isAuthenticated = plaignantService.authenticatePlaignant(pseudo, password);
+        if (isAuthenticated) {
+            return ResponseEntity.ok("Connexion réussie");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Pseudo ou mot de passe incorrect");
+        }
     }
 }
 

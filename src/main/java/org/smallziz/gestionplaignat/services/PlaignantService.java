@@ -56,4 +56,14 @@ public class PlaignantService {
                     return plaignantRepository.save(updatedPlaignant);
                 });
     }
+
+    // Méthode pour authentifier un utilisateur
+    public boolean authenticatePlaignant(String pseudo, String password) {
+        Optional<Plaignant> plaignant = plaignantRepository.findByPlaignantPseudo(pseudo);
+        if (plaignant.isPresent()) {
+            // Vérifiez si le mot de passe est correct (comparaison directe ici mais vous devriez hacher les mots de passe)
+            return plaignant.get().getMotDePasse().equals(password);
+        }
+        return false; // Retourner false si l'utilisateur n'existe pas ou si le mot de passe est incorrect
+    }
 }
