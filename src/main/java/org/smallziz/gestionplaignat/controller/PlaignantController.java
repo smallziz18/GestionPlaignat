@@ -13,15 +13,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/plaignants")
-public class PlaignatController {
+public class PlaignantController {
     private final PlaignantService plaignantService;
     private final UserVerificationService userVerificationService;
 
-    public PlaignatController(PlaignantService plaignantService, UserVerificationService userVerificationService) {
+    public PlaignantController(PlaignantService plaignantService, UserVerificationService userVerificationService) {
         this.plaignantService = plaignantService;
         this.userVerificationService = userVerificationService;
     }
-
 
     // Endpoint pour inscrire un nouvel utilisateur et envoyer le code de vérification par SMS et email
     @PostMapping("/register")
@@ -41,7 +40,7 @@ public class PlaignatController {
     }
 
     // Récupérer tous les plaignants
-    @GetMapping("/plaignants")
+    @GetMapping
     public List<Plaignant> getAllPlaignants() {
         return plaignantService.findAllPlaignants();
     }
@@ -69,7 +68,14 @@ public class PlaignatController {
     public ResponseEntity<String> verifyPlaignant(@RequestParam String plaignantId, @RequestParam String code) {
         boolean isVerified = userVerificationService.verifyCode(plaignantId, code);
         if (isVerified) {
-            return ResponseEntity.ok("Vérification réussie.");
+            // Mettre à jour l'état de vérification du plaignant
+            Plaignant plaignant = plaignantService.findPlaignantById(plaignantId).orElse(null);
+            if (plaignant != null) {
+                plaignant.setVerified(true);
+                plaignantService.savePlaignant(plaignant); // Sauvegarder le statut vérifié
+                return ResponseEntity.ok("Vérification réussie.");
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Code de vérification incorrect ou expiré.");
         }
@@ -78,6 +84,18 @@ public class PlaignatController {
     // Endpoint pour la connexion de l'utilisateur (login)
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        Optional<Plaignant> plaignantOptional = plaignantService.findPlaignantByPseudo(loginRequest.getPseudo());
+
+        if (plaignantOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Pseudo ou mot de passe incorrect.");
+        }
+
+        Plaignant plaignant = plaignantOptional.get();
+
+        if (!plaignant.isVerified()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Veuillez vérifier votre compte avant de vous connecter.");
+        }
+
         boolean isAuthenticated = plaignantService.authenticatePlaignant(loginRequest.getPseudo(), loginRequest.getPassword());
         if (isAuthenticated) {
             return ResponseEntity.ok("Connexion réussie");
@@ -86,5 +104,3 @@ public class PlaignatController {
         }
     }
 }
-
-
