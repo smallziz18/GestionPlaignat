@@ -1,5 +1,6 @@
 package org.smallziz.gestionplaignat.services;
 
+import jakarta.validation.constraints.NotNull;
 import org.smallziz.gestionplaignat.model.Plaignant;
 import org.smallziz.gestionplaignat.repository.PlaignantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,10 @@ public class PlaignantService {
         Optional<Plaignant> plaignant = plaignantRepository.findByPlaignantPseudo(pseudo);
         // Vérifiez si le mot de passe est correct (comparaison directe ici mais vous devriez hacher les mots de passe)
         return plaignant.map(value -> value.getMotDePasse().equals(password)).orElse(false);// Retourner false si l'utilisateur n'existe pas ou si le mot de passe est incorrect
+    }
+
+
+    public boolean existsByPseudo(@NotNull String plaignantPseudo) {
+        return plaignantRepository.findByPlaignantPseudo(plaignantPseudo).isPresent();
     }
 }
