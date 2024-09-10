@@ -16,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "plaignant")
 public class Plaignant {
+
     @Id
     @Column(name = "PLAIGNANT_ID", nullable = false)
     private String plaignantId = UUID.randomUUID().toString();
@@ -62,5 +63,6 @@ public class Plaignant {
     @NotNull
     private String motDePasse;
 
-
+    @Column(name = "IS_VERIFIED", nullable = false)
+    private boolean isVerified = false; // Par défaut, non vérifié
 }
