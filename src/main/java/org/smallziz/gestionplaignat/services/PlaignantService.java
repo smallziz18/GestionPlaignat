@@ -82,4 +82,21 @@ public class PlaignantService {
         Optional<Plaignant> plaignantOptional = findPlaignantByPseudo(pseudo);
         return plaignantOptional.isPresent() && passwordEncoder.matches(password, plaignantOptional.get().getMotDePasse());
     }
+    // Modifier le mot de passe en passant l'ancien mot de passe et le nouveau
+    public String updatePassword(String pseudo, String oldPassword, String newPassword) {
+        Optional<Plaignant> plaignantOptional = plaignantRepository.findPlaignantByPlaignantPseudo(pseudo);
+        if (plaignantOptional.isPresent()) {
+            Plaignant plaignant = plaignantOptional.get();
+            if (passwordEncoder.matches(oldPassword, plaignant.getMotDePasse())) {
+                // Hasher et mettre à jour le nouveau mot de passe
+                plaignant.setMotDePasse(passwordEncoder.encode(newPassword));
+                plaignantRepository.save(plaignant);
+                return "Le mot de passe a été mis à jour avec succès.";
+            } else {
+                return "L'ancien mot de passe est incorrect.";
+            }
+        }
+        return "Utilisateur non trouvé.";
+    }
+
 }
