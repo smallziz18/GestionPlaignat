@@ -13,12 +13,12 @@ import java.util.Optional;
 public class PlaignantService {
 
     private final PlaignantRepository plaignantRepository;
-    private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
-    public PlaignantService(PlaignantRepository plaignantRepository, PasswordEncoder passwordEncoder) {
+    public PlaignantService(PlaignantRepository plaignantRepository) {
         this.plaignantRepository = plaignantRepository;
-        this.passwordEncoder = passwordEncoder;
+
     }
 
     // Vérifier si un utilisateur existe par pseudo
@@ -29,7 +29,7 @@ public class PlaignantService {
     // Enregistrer un nouveau plaignant
     public Plaignant savePlaignant(Plaignant plaignant) {
         // Hashage du mot de passe avant de sauvegarder
-        plaignant.setMotDePasse(passwordEncoder.encode(plaignant.getMotDePasse()));
+        plaignant.setMotDePasse((plaignant.getMotDePasse()));
         return plaignantRepository.save(plaignant);
     }
 
@@ -62,12 +62,12 @@ public class PlaignantService {
                     plaignant.setPlaignantAge(updatedPlaignant.getPlaignantAge());
                     plaignant.setPlaignantAvatar(updatedPlaignant.getPlaignantAvatar());
                     // Mise à jour du mot de passe (hashé)
-                    plaignant.setMotDePasse(passwordEncoder.encode(updatedPlaignant.getMotDePasse()));
+                    plaignant.setMotDePasse((updatedPlaignant.getMotDePasse()));
                     return plaignantRepository.save(plaignant);
                 })
                 .orElseGet(() -> {
                     updatedPlaignant.setPlaignantId(id);
-                    updatedPlaignant.setMotDePasse(passwordEncoder.encode(updatedPlaignant.getMotDePasse()));
+                    updatedPlaignant.setMotDePasse((updatedPlaignant.getMotDePasse()));
                     return plaignantRepository.save(updatedPlaignant);
                 });
     }
@@ -80,16 +80,16 @@ public class PlaignantService {
     // Authentifier un utilisateur
     public boolean authenticatePlaignant(String pseudo, String password) {
         Optional<Plaignant> plaignantOptional = findPlaignantByPseudo(pseudo);
-        return plaignantOptional.isPresent() && passwordEncoder.matches(password, plaignantOptional.get().getMotDePasse());
+        return plaignantOptional.isPresent() && password.equals(plaignantOptional.get().getMotDePasse());
     }
     // Modifier le mot de passe en passant l'ancien mot de passe et le nouveau
     public String updatePassword(String pseudo, String oldPassword, String newPassword) {
         Optional<Plaignant> plaignantOptional = plaignantRepository.findPlaignantByPlaignantPseudo(pseudo);
         if (plaignantOptional.isPresent()) {
             Plaignant plaignant = plaignantOptional.get();
-            if (passwordEncoder.matches(oldPassword, plaignant.getMotDePasse())) {
-                // Hasher et mettre à jour le nouveau mot de passe
-                plaignant.setMotDePasse(passwordEncoder.encode(newPassword));
+            if (oldPassword.equals(plaignant.getMotDePasse()))  {
+
+
                 plaignantRepository.save(plaignant);
                 return "Le mot de passe a été mis à jour avec succès.";
             } else {
